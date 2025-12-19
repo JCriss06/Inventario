@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 
+use Illuminate\Http\Request;
+use App\Models\Product;
 class ProductController extends Controller
 {
     /**
@@ -11,7 +12,11 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('products.index');
+        $producto = Product::orderBy('clave','asc')
+        ->select('clave','descripcion','marca','stock')->get();
+
+
+        return view('products.index', compact('producto'));
     }
 
     /**
@@ -19,7 +24,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return "Formulario para crear un nuevo producto";
+        return view('products.create');
     }
 
     /**
@@ -35,7 +40,7 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+
     }
 
     /**
@@ -43,7 +48,7 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        return "Formulario para editar un producto ";
+        return "Formulario para editar el producto ";
     }
 
     /**
