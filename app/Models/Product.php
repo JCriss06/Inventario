@@ -12,6 +12,7 @@ class Product extends Model
 {
 
     protected $fillable = ['clave', 'descripcion', 'marca', 'stock'];
+    
     public function reportes(): HasMany{
         return $this->hasMany(Reporte::class);
     }

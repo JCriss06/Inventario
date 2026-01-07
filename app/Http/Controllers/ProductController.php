@@ -12,8 +12,9 @@ class ProductController extends Controller
      */
     public function index()
     {
+        
         $producto = Product::orderBy('clave','asc')
-        ->select('clave','descripcion','marca','stock')->get();
+        ->select('id','clave','descripcion','marca','stock')->paginate(3);
 
 
         return view('products.index', compact('producto'));
@@ -32,7 +33,9 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        return "Almacenar nuevo producto";
+        Product::create($request->all());
+
+        return redirect()->route('products.index');
     }
 
     /**
@@ -48,7 +51,7 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        return "Formulario para editar el producto ";
+    
     }
 
     /**
@@ -56,7 +59,11 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        return "Actualizar producto existente";
+
+        $producto = Product::find($id);
+        $producto->update($request->only(['clave', 'descripcion', 'marca']));
+        
+        return redirect()->route('products.index');
     }
 
     /**
@@ -64,6 +71,8 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        return "Eliminar producto";
+        $producto = Product::find($id);
+        $producto->delete();
+        return redirect()->route('products.index');
     }
 }
