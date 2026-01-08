@@ -14,7 +14,7 @@ class ProductController extends Controller
     {
         
         $producto = Product::orderBy('clave','asc')
-        ->select('id','clave','descripcion','marca','stock')->paginate(3);
+        ->select('id','clave','descripcion','marca','stock')->paginate();
 
 
         return view('products.index', compact('producto'));
@@ -33,7 +33,15 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'clave' => 'required | unique:products | max:20',
+            'descripcion' => 'nullable | max:255',
+            'marca' => 'nullable | max:255',
+            'stock' => 'required | integer | min:0',
+        ]);
+
         Product::create($request->all());
+
 
         return redirect()->route('products.index');
     }
@@ -59,10 +67,16 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
-        $producto = Product::find($id);
-        $producto->update($request->only(['clave', 'descripcion', 'marca']));
+         $producto = Product::findOrFail($id);
+         $request->validate([
+            'clave' => "required | unique:products,clave,{$producto->id} | max:20",
+            'descripcion' => 'nullable | max:255',
+            'marca' => 'nullable | max:255',
+        ]);
         
+       
+        $producto->update($request->only(['clave', 'descripcion', 'marca']));
+
         return redirect()->route('products.index');
     }
 
@@ -71,8 +85,8 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        $producto = Product::find($id);
+        $producto = Product::findOrFail($id);
         $producto->delete();
-        return redirect()->route('products.index');
+        return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente');
     }
 }

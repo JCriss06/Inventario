@@ -9,6 +9,13 @@
 
 {{-- <h1><b>Lista de Productos</b></h1>--}}
 
+@if(session('success'))
+<x-alert type="success">
+    <x-slot name="message"> Éxito! </x-slot>
+    {{ session('success') }}
+</x-alert>
+@endif
+
 <div class="mx-auto py-4 ">
     <div class="flex justify-end my-4 mb-4 mr-24 gap-6"> 
        
@@ -16,8 +23,10 @@
         <x-primary-button x-data=""  x-on:click.prevent="$dispatch('open-modal', 'Add product')" class="bg-red-600 hover:bg-red-300">
              Agregar Producto 
         </x-primary-button>
-
-        <x-primary-button class="bg-red-600 hover:bg-red-300"> Entradas/Salidas </x-primary-button>
+<a href="{{ route('inventory.index')}}"> <x-primary-button class="bg-red-600 hover:bg-red-300"> 
+            Entradas/Salidas
+         </x-primary-button> </a>
+        
     </div>
 
 </div>

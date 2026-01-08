@@ -11,10 +11,7 @@
 
 
     <div class = "max-w-4xl mx-auto py-4">
-    <x-alert type="warning"> 
-        <x-slot name="message"> Error alert!! </x-slot>
-        Algo salio mal, por favor intente de nuevo.
-    </x-alert>
+    
 
     </div>
 

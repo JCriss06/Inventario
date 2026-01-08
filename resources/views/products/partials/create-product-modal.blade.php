@@ -27,7 +27,7 @@
 
         <div>
             <x-input-label for="stock" :value="__('Stock')" />
-            <x-text-input id="stock" name="stock" type="text" class="mt-1 block w-full" autofocus autocomplete="stock" />
+            <x-text-input id="stock" name="stock" type="text" class="mt-1 block w-full" value="0" autofocus autocomplete="stock" />
             <x-input-error class="mt-2" :messages="$errors->get('stock')" />
         </div>
 
