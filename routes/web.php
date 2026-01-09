@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\BitacoraController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,6 +26,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/inventario/movements', [InventoryController::class, 'store'])->name('inventory.store');
     //rutas para reportes
     Route::get('/reportes', [ReportController::class, 'index'])->name('reportes.index');
+    //rutas para bitácoras
+    Route::get('/bitacoras', [BitacoraController::class, 'index'])->name('bitacoras.index');
 
 });
 

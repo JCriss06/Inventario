@@ -1,67 +1,123 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false, showNotifications: false, showUserMenu: false }" class="bg-white border-b border-gray-200 sticky top-0 z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex">
+            <div class="flex items-center gap-8">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-rose-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                        </div>
+                        <span class="font-semibold text-lg text-gray-900">InvenTrack</span>
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
-
-                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
-                        {{ __('Productos') }}
-                    </x-nav-link>
-                </div>
-                
-                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('reportes.index')" :active="request()->routeIs('reportes.*')">
-                        {{ __('Reportes') }}
-                    </x-nav-link>
-                </div>
+                <nav class="hidden sm:flex items-center gap-1">
+                    <a href="{{ route('dashboard') }}" 
+                       class="px-4 py-2 text-sm font-medium rounded-none transition-colors
+                              {{ request()->routeIs('dashboard') 
+                                 ? 'text-rose-600 border-b-2 border-rose-600' 
+                                 : 'text-gray-500 hover:text-gray-700' }}">
+                        Dashboard
+                    </a>
+                    <a href="{{ route('products.index') }}" 
+                       class="px-4 py-2 text-sm font-medium rounded-none transition-colors
+                              {{ request()->routeIs('products.*') 
+                                 ? 'text-rose-600 border-b-2 border-rose-600' 
+                                 : 'text-gray-500 hover:text-gray-700' }}">
+                        Productos
+                    </a>
+                    <a href="{{ route('bitacoras.index') }}" 
+                       class="px-4 py-2 text-sm font-medium rounded-none transition-colors
+                              {{ request()->routeIs('bitacoras.*') 
+                                 ? 'text-rose-600 border-b-2 border-rose-600' 
+                                 : 'text-gray-500 hover:text-gray-700' }}">
+                        Bitácoras
+                    </a>
+                    <a href="{{ route('reportes.index') }}" 
+                       class="px-4 py-2 text-sm font-medium rounded-none transition-colors
+                              {{ request()->routeIs('reportes.*') 
+                                 ? 'text-rose-600 border-b-2 border-rose-600' 
+                                 : 'text-gray-500 hover:text-gray-700' }}">
+                        Reportes
+                    </a>
+                </nav>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+            <!-- Usuario y notificaciones -->
+            <div class="hidden sm:flex sm:items-center gap-3">
+                <!-- Notificaciones -->
+                <div class="relative">
+                    <button @click="showNotifications = !showNotifications" 
+                            @click.away="showNotifications = false"
+                            class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
 
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
+                    <!-- Dropdown de notificaciones -->
+                    <div x-show="showNotifications" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="absolute right-0 top-12 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50">
+                        <h3 class="font-semibold text-gray-900 mb-3">Notificaciones</h3>
+                        <div class="space-y-2">
+                            <div class="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                                <p class="text-sm font-medium text-gray-900">Stock bajo detectado</p>
+                                <p class="text-xs text-gray-500 mt-1">Algunos productos necesitan reabastecimiento</p>
                             </div>
-                        </button>
-                    </x-slot>
+                            <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                <p class="text-sm font-medium text-gray-900">Sistema actualizado</p>
+                                <p class="text-xs text-gray-500 mt-1">InvenTrack v1.0.0 está funcionando correctamente</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
+                <!-- Usuario Dropdown -->
+                <div class="relative">
+                    <button @click="showUserMenu = !showUserMenu"
+                            @click.away="showUserMenu = false"
+                            class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                        <span class="text-sm font-medium text-gray-700">{{ Auth::user()->name }}</span>
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
 
-                        <!-- Authentication -->
+                    <!-- Dropdown de usuario -->
+                    <div x-show="showUserMenu"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="absolute right-0 top-12 w-48 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-50">
+                        <a href="{{ route('profile.edit') }}" 
+                           class="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg text-left">
+                            Mi Perfil
+                        </a>
+                        <div class="border-t border-gray-200 my-2"></div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
+                            <button type="submit" 
+                                    class="block w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg text-left">
+                                Cerrar Sesión
+                            </button>
                         </form>
-                    </x-slot>
-                </x-dropdown>
+                    </div>
+                </div>
             </div>
 
             <!-- Hamburger -->
@@ -79,9 +135,22 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
+            <a href="{{ route('dashboard') }}" 
+               class="block px-4 py-2 text-base font-medium {{ request()->routeIs('dashboard') ? 'text-rose-600 bg-rose-50 border-l-4 border-rose-600' : 'text-gray-600 hover:bg-gray-50' }}">
+                Dashboard
+            </a>
+            <a href="{{ route('products.index') }}" 
+               class="block px-4 py-2 text-base font-medium {{ request()->routeIs('products.*') ? 'text-rose-600 bg-rose-50 border-l-4 border-rose-600' : 'text-gray-600 hover:bg-gray-50' }}">
+                Productos
+            </a>
+            <a href="{{ route('bitacoras.index') }}" 
+               class="block px-4 py-2 text-base font-medium {{ request()->routeIs('bitacoras.*') ? 'text-rose-600 bg-rose-50 border-l-4 border-rose-600' : 'text-gray-600 hover:bg-gray-50' }}">
+                Bitácoras
+            </a>
+            <a href="{{ route('reportes.index') }}" 
+               class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reportes.*') ? 'text-rose-600 bg-rose-50 border-l-4 border-rose-600' : 'text-gray-600 hover:bg-gray-50' }}">
+                Reportes
+            </a>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -92,19 +161,18 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
+                <a href="{{ route('profile.edit') }}" 
+                   class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50">
+                    Mi Perfil
+                </a>
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
+                    <button type="submit" 
+                            class="block w-full text-left px-4 py-2 text-base font-medium text-red-600 hover:bg-red-50">
+                        Cerrar Sesión
+                    </button>
                 </form>
             </div>
         </div>
