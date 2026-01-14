@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Kit;
+use Illuminate\Support\Facades\DB;
+
 class ProductController extends Controller
 {
     /**
@@ -25,7 +28,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('products.create');
+        $productos = Product::orderBy('clave')->get();
+        return view('products.create', compact('productos'));
     }
 
     /**
@@ -33,17 +37,75 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $tipo = $request->input('tipo', 'individual');
+
+        if ($tipo === 'individual') {
+            return $this->storeProductoIndividual($request);
+        } else {
+            return $this->storeKit($request);
+        }
+    }
+
+    /**
+     * Guardar un producto individual
+     */
+    private function storeProductoIndividual(Request $request)
+    {
         $request->validate([
-            'clave' => 'required | unique:products | max:20',
-            'descripcion' => 'nullable | max:255',
-            'marca' => 'nullable | max:255',
-            'stock' => 'required | integer | min:0',
+            'clave' => 'required|unique:products|max:20',
+            'descripcion' => 'nullable|max:255',
+            'marca' => 'nullable|max:255',
+            'stock' => 'required|integer|min:0',
         ]);
 
-        Product::create($request->all());
+        Product::create($request->only(['clave', 'descripcion', 'marca', 'stock']));
 
+        return redirect()->route('products.index')->with('success', 'Producto creado exitosamente');
+    }
 
-        return redirect()->route('products.index');
+    /**
+     * Guardar un kit con múltiples productos (nuevos)
+     */
+    private function storeKit(Request $request)
+    {
+        $request->validate([
+            'nombre_kit' => 'required|unique:kits,nombre|max:255',
+            'codigo_kit' => 'required|unique:kits,codigo_kit|max:20',
+            'descripcion_kit' => 'nullable|max:255',
+            'productos.*.clave' => 'required|unique:products,clave|max:20',
+            'productos.*.marca' => 'required|max:255',
+            'productos.*.descripcion' => 'required|max:255',
+            'productos.*.stock' => 'required|integer|min:0',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Crear el kit
+            $kit = Kit::create([
+                'nombre' => $request->input('nombre_kit'),
+                'codigo_kit' => $request->input('codigo_kit'),
+                'descripcion' => $request->input('descripcion_kit'),
+            ]);
+
+            // Crear productos y agregarlos al kit
+            foreach ($request->input('productos') as $item) {
+                $producto = Product::create([
+                    'clave' => $item['clave'],
+                    'marca' => $item['marca'],
+                    'descripcion' => $item['descripcion'],
+                    'stock' => $item['stock'],
+                ]);
+
+                // Agregar el producto al kit con cantidad 1
+                $kit->productos()->attach($producto->id, ['cantidad' => 1]);
+            }
+
+            DB::commit();
+            return redirect()->route('products.index')->with('success', 'Kit creado exitosamente con ' . count($request->input('productos')) . ' productos nuevos');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->withErrors(['error' => 'Error al crear el kit: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -69,15 +131,15 @@ class ProductController extends Controller
     {
          $producto = Product::findOrFail($id);
          $request->validate([
-            'clave' => "required | unique:products,clave,{$producto->id} | max:20",
-            'descripcion' => 'nullable | max:255',
-            'marca' => 'nullable | max:255',
+            'clave' => "required|unique:products,clave,{$producto->id}|max:20",
+            'descripcion' => 'nullable|max:255',
+            'marca' => 'nullable|max:255',
         ]);
         
        
         $producto->update($request->only(['clave', 'descripcion', 'marca']));
 
-        return redirect()->route('products.index');
+        return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente');
     }
 
     /**
@@ -90,3 +152,4 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente');
     }
 }
+

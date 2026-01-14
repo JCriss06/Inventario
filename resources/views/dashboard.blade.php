@@ -193,7 +193,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="text-center md:text-left">
-                    <p class="text-sm font-medium text-gray-900">Sistema de Inventario InvenTrack</p>
+                    <p class="text-sm font-medium text-gray-900">Sistema de Inventario TSM</p>
                     <p class="text-xs text-gray-500 mt-1">Desarrollado con dedicación para gestionar tu inventario de manera eficiente</p>
                 </div>
                 <div class="text-center md:text-right">
@@ -204,7 +204,7 @@
             </div>
             <div class="border-t border-gray-200 mt-4 pt-4 text-center">
                 <p class="text-xs text-gray-500">
-                    © {{ date('Y') }} InvenTrack Team. Todos los derechos reservados. | Versión 1.0.0
+                    © {{ date('Y') }} TSM Sistemas Integrales. Todos los derechos reservados.
                 </p>
             </div>
         </div>
