@@ -9,7 +9,6 @@ class ReportController extends Controller
 {
     public function index(Request $request){
 
-
        $query = Reporte::with(['product', 'user'])->latest();
 
     // Filtro por Periodos Predefinidos
@@ -29,6 +28,11 @@ class ReportController extends Controller
                 $query->whereYear('created_at', Carbon::now()->year);
                 break;
         }
+    }
+
+    // Filtro por Tipo (Entrada/Salida)
+    if ($request->filled('tipo')) {
+        $query->where('tipo_reporte', $request->tipo);
     }
 
     // Filtro por Fecha Manual (Si el usuario elige un rango)
