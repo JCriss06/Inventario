@@ -1,4 +1,9 @@
 <x-app-layout>
+    {{-- titulo --}}
+    <x-slot name="title">
+        Productos - TSM Sistemas Integrales
+    </x-slot>
+    
     <x-slot name="header">
         <div class="bg-gradient-to-r from-rose-100 to-pink-100">
             <h2 class="font-semibold text-2xl text-rose-900 leading-tight">

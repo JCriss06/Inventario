@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Helpers\BitacoraHelper;
 use Illuminate\Support\Facades\DB;
 use App\Models\Reporte;
 class InventoryController extends Controller
@@ -43,6 +44,14 @@ class InventoryController extends Controller
                     'cantidad' => $item['cantidad'],
                     'tipo_reporte' => $item['tipo'],
                 ]);
+                
+                // Registrar en bitácora
+                $tipo_texto = $item['tipo'] === 'entrada' ? 'entrada' : 'salida';
+                BitacoraHelper::registrarMovimiento(
+                    $tipo_texto,
+                    $producto,
+                    $item['cantidad']
+                );
             }
             DB::commit();
             return redirect()->route('inventory.index')->with('success', 'Stock Actualizado');

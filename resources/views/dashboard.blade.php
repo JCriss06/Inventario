@@ -1,7 +1,7 @@
 <x-app-layout>
     {{-- titulo --}}
     <x-slot name="title">
-        Dashboard - InvenTrack
+        Dashboard - TSM Sistemas Integrales
     </x-slot>
     
     <x-slot name="header">

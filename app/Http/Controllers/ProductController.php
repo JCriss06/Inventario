@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Kit;
+use App\Helpers\BitacoraHelper;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
@@ -58,7 +59,10 @@ class ProductController extends Controller
             'stock' => 'required|integer|min:0',
         ]);
 
-        Product::create($request->only(['clave', 'descripcion', 'marca', 'stock']));
+        $producto = Product::create($request->only(['clave', 'descripcion', 'marca', 'stock']));
+        
+        // Registrar en bitácora
+        BitacoraHelper::registrarCrearProducto($producto);
 
         return redirect()->route('products.index')->with('success', 'Producto creado exitosamente');
     }
@@ -98,7 +102,17 @@ class ProductController extends Controller
 
                 // Agregar el producto al kit con cantidad 1
                 $kit->productos()->attach($producto->id, ['cantidad' => 1]);
+                
+                // Registrar creación de cada producto
+                BitacoraHelper::registrarCrearProducto($producto);
             }
+
+            // Registrar creación del kit
+            BitacoraHelper::registrar(
+                'crear',
+                'Creó un nuevo kit: ' . $kit->nombre . ' con ' . count($request->input('productos')) . ' productos',
+                $kit->id
+            );
 
             DB::commit();
             return redirect()->route('products.index')->with('success', 'Kit creado exitosamente con ' . count($request->input('productos')) . ' productos nuevos');
@@ -136,8 +150,18 @@ class ProductController extends Controller
             'marca' => 'nullable|max:255',
         ]);
         
-       
+        // Capturar cambios antes de actualizar
+        $cambios = [];
+        if ($producto->clave !== $request->clave) $cambios['clave'] = $request->clave;
+        if ($producto->descripcion !== $request->descripcion) $cambios['descripcion'] = $request->descripcion;
+        if ($producto->marca !== $request->marca) $cambios['marca'] = $request->marca;
+        
         $producto->update($request->only(['clave', 'descripcion', 'marca']));
+        
+        // Registrar en bitácora si hubo cambios
+        if (!empty($cambios)) {
+            BitacoraHelper::registrarEditarProducto($producto, $cambios);
+        }
 
         return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente');
     }
@@ -148,6 +172,13 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         $producto = Product::findOrFail($id);
+        
+        // Eliminar primero todos los reportes relacionados (entradas/salidas)
+        \App\Models\Reporte::where('product_id', $producto->id)->delete();
+        
+        // Registrar eliminación en bitácora
+        BitacoraHelper::registrarEliminarProducto($producto);
+        
         $producto->delete();
         return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente');
     }

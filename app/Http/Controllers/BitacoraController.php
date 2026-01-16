@@ -38,6 +38,8 @@ class BitacoraController extends Controller
             'editar' => Bitacora::where('accion', 'editar')->count(),
             'eliminar' => Bitacora::where('accion', 'eliminar')->count(),
             'sesion' => Bitacora::where('accion', 'sesion')->count(),
+            'usuarios_activos' => Bitacora::select('user_id')->distinct()->count(),
+            'acciones_hoy' => Bitacora::whereDate('created_at', today())->count(),
         ];
 
         // Usuarios para el filtro

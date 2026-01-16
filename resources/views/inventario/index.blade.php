@@ -1,4 +1,8 @@
-<x-app-layout> 
+<x-app-layout>
+    {{-- titulo --}}
+    <x-slot name="title">
+        Entradas/Salidas - TSM Sistemas Integrales
+    </x-slot> 
 <div class="my-2 max-w-7xl mx-auto w-full">
 
 @if(session('success'))
