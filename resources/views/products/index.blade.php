@@ -5,8 +5,8 @@
     </x-slot>
     
     <x-slot name="header">
-        <div class="bg-gradient-to-r from-rose-100 to-pink-100">
-            <h2 class="font-semibold text-2xl text-rose-900 leading-tight">
+        <div class="bg-white">
+            <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
                 {{ __('Productos') }}
             </h2>
         </div>
@@ -20,6 +20,13 @@
                     <span class="font-semibold">✓ Éxito:</span> {{ session('success') }}
                 </div>
             @endif
+
+            <!-- Barra de búsqueda -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar por clave, descripción o marca..." 
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <p class="text-xs text-gray-500 mt-1">Encuentra lo que necesitas</p>
+            </div>
 
             <!-- Barra de acciones -->
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -38,13 +45,21 @@
 
             <!-- Tabla de productos -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <table class="w-full">
+                <table class="w-full" id="productsTable">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Clave</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Descripción</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Marca</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Stock</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors select-none" data-column="clave">
+                                Clave <span class="text-gray-400 text-xs ml-1">↕</span>
+                            </th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors select-none" data-column="descripcion">
+                                Descripción <span class="text-gray-400 text-xs ml-1">↕</span>
+                            </th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors select-none" data-column="marca">
+                                Marca <span class="text-gray-400 text-xs ml-1">↕</span>
+                            </th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors select-none" data-column="stock">
+                                Stock <span class="text-gray-400 text-xs ml-1">↕</span>
+                            </th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Estado</th>
                             <th class="px-6 py-3 text-right text-sm font-semibold text-gray-700">Acciones</th>
                         </tr>
@@ -77,17 +92,15 @@
                                             class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar">
                                             ✏️
                                         </button>
-                                        <form action="{{ route('products.destroy', $prod->id) }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar">
-                                                🗑️
-                                            </button>
-                                        </form>
+                                        <button type="button" x-data="" x-on:click.prevent="$dispatch('open-modal', 'Delete product {{$prod->id}}')" 
+                                            class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar">
+                                            🗑️
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
                             @include ('products.partials.update-product-modal', ['prod' => $prod])
+                            @include ('products.partials.delete-product-modal', ['prod' => $prod])
                         @empty
                             <tr>
                                 <td colspan="6" class="px-6 py-12 text-center">
@@ -114,4 +127,117 @@
 
         </div>
     </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const tableRows = document.querySelectorAll('tbody tr');
+        const columnHeaders = document.querySelectorAll('thead th[data-column]');
+        let totalProductos = {{ $producto->total() }};
+        let sortColumn = null;
+        let sortDirection = 'asc';
+
+        // Búsqueda
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            tableRows.forEach(row => {
+                // Saltar fila de "No hay productos"
+                if (row.querySelector('td[colspan="6"]')) {
+                    return;
+                }
+
+                const clave = row.cells[0]?.textContent.toLowerCase() || '';
+                const descripcion = row.cells[1]?.textContent.toLowerCase() || '';
+                const marca = row.cells[2]?.textContent.toLowerCase() || '';
+
+                const matches = clave.includes(query) || descripcion.includes(query) || marca.includes(query);
+
+                if (query === '' || matches) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Mostrar mensaje si no hay resultados
+            let noResultsRow = document.querySelector('tbody tr[data-no-results]');
+            
+            if (visibleCount === 0 && query !== '') {
+                if (!noResultsRow) {
+                    noResultsRow = document.createElement('tr');
+                    noResultsRow.setAttribute('data-no-results', 'true');
+                    noResultsRow.innerHTML = '<td colspan="6" class="px-6 py-12 text-center"><p class="text-gray-500 text-sm">📭 No se encontraron productos con ese criterio.</p></td>';
+                    document.querySelector('tbody').appendChild(noResultsRow);
+                }
+                noResultsRow.style.display = '';
+            } else if (noResultsRow) {
+                noResultsRow.style.display = 'none';
+            }
+        });
+
+        // Ordenamiento de columnas
+        columnHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const column = this.getAttribute('data-column');
+                
+                // Cambiar dirección si es la misma columna
+                if (sortColumn === column) {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortColumn = column;
+                    sortDirection = 'asc';
+                }
+
+                // Actualizar indicadores visuales
+                columnHeaders.forEach(h => {
+                    const span = h.querySelector('span');
+                    if (span) span.textContent = '↕';
+                    h.classList.remove('bg-blue-50');
+                });
+                
+                const activeSpan = this.querySelector('span');
+                if (activeSpan) {
+                    activeSpan.textContent = sortDirection === 'asc' ? '↑' : '↓';
+                }
+                this.classList.add('bg-blue-50');
+
+                // Obtener filas visibles y ordenarlas
+                const visibleRows = Array.from(tableRows).filter(row => {
+                    return row.style.display !== 'none' && !row.querySelector('td[colspan]');
+                });
+
+                visibleRows.sort((a, b) => {
+                    let aValue, bValue;
+                    
+                    if (column === 'stock') {
+                        aValue = parseInt(a.cells[3]?.textContent) || 0;
+                        bValue = parseInt(b.cells[3]?.textContent) || 0;
+                    } else if (column === 'clave') {
+                        aValue = a.cells[0]?.textContent.trim() || '';
+                        bValue = b.cells[0]?.textContent.trim() || '';
+                    } else if (column === 'descripcion') {
+                        aValue = a.cells[1]?.textContent.trim() || '';
+                        bValue = b.cells[1]?.textContent.trim() || '';
+                    } else if (column === 'marca') {
+                        aValue = a.cells[2]?.textContent.trim() || '';
+                        bValue = b.cells[2]?.textContent.trim() || '';
+                    }
+
+                    if (typeof aValue === 'number') {
+                        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+                    } else {
+                        return sortDirection === 'asc' 
+                            ? aValue.localeCompare(bValue)
+                            : bValue.localeCompare(aValue);
+                    }
+                });
+
+                // Reorganizar filas en el DOM
+                const tbody = document.querySelector('tbody');
+                visibleRows.forEach(row => tbody.appendChild(row));
+            });
+        });
+    </script>
 </x-app-layout>

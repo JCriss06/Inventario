@@ -1,4 +1,4 @@
-<nav x-data="{ open: false, showNotifications: false, showUserMenu: false }" class="bg-white border-b border-gray-200 sticky top-0 z-50">
+<nav x-data="{ open: false, showUserMenu: false }" class="bg-white border-b border-gray-200 sticky top-0 z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -44,42 +44,8 @@
                 </nav>
             </div>
 
-            <!-- Usuario y notificaciones -->
+            <!-- Usuario -->
             <div class="hidden sm:flex sm:items-center gap-3">
-                <!-- Notificaciones -->
-                <div class="relative">
-                    <button @click="showNotifications = !showNotifications" 
-                            @click.away="showNotifications = false"
-                            class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors relative">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                        </svg>
-                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                    </button>
-
-                    <!-- Dropdown de notificaciones -->
-                    <div x-show="showNotifications" 
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 scale-95"
-                         x-transition:enter-end="opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-75"
-                         x-transition:leave-start="opacity-100 scale-100"
-                         x-transition:leave-end="opacity-0 scale-95"
-                         class="absolute right-0 top-12 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50">
-                        <h3 class="font-semibold text-gray-900 mb-3">Notificaciones</h3>
-                        <div class="space-y-2">
-                            <div class="p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                                <p class="text-sm font-medium text-gray-900">Stock bajo detectado</p>
-                                <p class="text-xs text-gray-500 mt-1">Algunos productos necesitan reabastecimiento</p>
-                            </div>
-                            <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                                <p class="text-sm font-medium text-gray-900">Sistema actualizado</p>
-                                <p class="text-xs text-gray-500 mt-1">TSM Sistemas Integrales v1.0.0 está funcionando correctamente</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Usuario Dropdown -->
                 <div class="relative">
                     <button @click="showUserMenu = !showUserMenu"

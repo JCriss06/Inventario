@@ -1,7 +1,7 @@
 ﻿<x-app-layout>
     <x-slot name="header">
-        <div class="bg-gradient-to-r from-rose-100 to-pink-100">
-            <h2 class="font-semibold text-2xl text-rose-900 leading-tight">
+        <div class="bg-white">
+            <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
                 {{ __("Agregar Productos") }}
             </h2>
         </div>
