@@ -27,7 +27,7 @@
             <div class="bg-white p-4 rounded-lg shadow flex items-center gap-6">
                 <h2 class="text-xl font-bold text-gray-800">Movimientos de Inventario</h2>
                 
-                <div class="flex items-center gap-4 bg-gray-100 p-2 rounded-md">
+                <div class="flex items-center gap-4 bg-white p-2 rounded-md">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" x-model="tipoGlobal" value="entrada" class="text-green-600">
                         <span class="font-semibold text-green-700">Entrada ↓</span>

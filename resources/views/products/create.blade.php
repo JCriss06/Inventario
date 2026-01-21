@@ -18,9 +18,9 @@
                             class="tab-button active py-4 px-1 border-b-2 border-rose-600 font-medium text-sm text-rose-600">
                             Producto Individual
                         </button>
-                        <button type="button" onclick="cambiarTab('kit')" id="tab-kit"
+                        <button type="button" onclick="cambiarTab('carga-masiva')" id="tab-carga-masiva"
                             class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                            Kit (Varios productos)
+                            Carga Masiva de Productos
                         </button>
                     </nav>
                 </div>
@@ -90,45 +90,14 @@
                 </div>
             </div>
 
-            <!-- Formulario Kit -->
-            <div id="content-kit" class="tab-content hidden">
+            <!-- Formulario Carga Masiva -->
+            <div id="content-carga-masiva" class="tab-content hidden">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <form action="{{ route('products.store') }}" method="POST" class="space-y-6" id="form-kit">
+                    <h2 class="text-xl font-semibold mb-2 text-gray-900">Carga Masiva de Productos</h2>
+                    <p class="text-sm text-gray-600 mb-6">Agrega múltiples productos a la vez para inventario</p>
+                    <form action="{{ route('products.store') }}" method="POST" class="space-y-6" id="form-carga-masiva">
                         @csrf
-                        <input type="hidden" name="tipo" value="kit">
-
-                        <!-- Información del Kit -->
-                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-4">
-                            <h3 class="font-semibold text-gray-900 text-lg">Información del Kit</h3>
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label for="nombre_kit" class="block text-sm font-medium text-gray-700 mb-2">
-                                        Nombre del Kit <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" id="nombre_kit" name="nombre_kit" placeholder="Ej: Kit Gaming"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                                        required>
-                                </div>
-
-                                <div>
-                                    <label for="codigo_kit" class="block text-sm font-medium text-gray-700 mb-2">
-                                        Código del Kit <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" id="codigo_kit" name="codigo_kit" placeholder="Ej: KIT-001"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                                        required>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label for="descripcion_kit" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Descripción del Kit
-                                </label>
-                                <textarea id="descripcion_kit" name="descripcion_kit" rows="2" placeholder="Describe qué contiene este kit"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"></textarea>
-                            </div>
-                        </div>
+                        <input type="hidden" name="tipo" value="carga-masiva">
 
                         <!-- Productos del Kit -->
                         <div class="space-y-4">
@@ -178,7 +147,7 @@
             document.getElementById("tab-" + tab).classList.remove("border-transparent", "text-gray-500");
             document.getElementById("tab-" + tab).classList.add("border-rose-600", "text-rose-600");
 
-            if (tab === "kit" && document.querySelectorAll("[id^='fila-']").length === 0) {
+            if (tab === "carga-masiva" && document.querySelectorAll("[id^='fila-']").length === 0) {
                 agregarFila();
             }
         }

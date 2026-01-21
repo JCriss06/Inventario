@@ -345,16 +345,21 @@
                     document.getElementById('contenido-movimientos').classList.add('hidden');
                     document.getElementById('contenido-stock').classList.add('hidden');
                     
-                    // Remover clase active de botones
+                    // Remover clases de ambos botones (remover todo)
                     document.getElementById('tab-movimientos').classList.remove('border-blue-600', 'text-gray-900');
+                    document.getElementById('tab-movimientos').classList.add('border-transparent', 'text-gray-500');
+                    
                     document.getElementById('tab-stock').classList.remove('border-blue-600', 'text-gray-900');
+                    document.getElementById('tab-stock').classList.add('border-transparent', 'text-gray-500');
                     
                     // Mostrar tab seleccionado y marcar botón
                     if (tab === 'movimientos') {
                         document.getElementById('contenido-movimientos').classList.remove('hidden');
+                        document.getElementById('tab-movimientos').classList.remove('border-transparent', 'text-gray-500');
                         document.getElementById('tab-movimientos').classList.add('border-blue-600', 'text-gray-900');
                     } else {
                         document.getElementById('contenido-stock').classList.remove('hidden');
+                        document.getElementById('tab-stock').classList.remove('border-transparent', 'text-gray-500');
                         document.getElementById('tab-stock').classList.add('border-blue-600', 'text-gray-900');
                     }
                 }

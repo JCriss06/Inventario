@@ -43,7 +43,7 @@ class ProductController extends Controller
         if ($tipo === 'individual') {
             return $this->storeProductoIndividual($request);
         } else {
-            return $this->storeKit($request);
+            return $this->storeProductosMasivos($request);
         }
     }
 
@@ -56,7 +56,7 @@ class ProductController extends Controller
             'clave' => 'required|unique:products|max:20',
             'descripcion' => 'nullable|max:255',
             'marca' => 'nullable|max:255',
-            'stock' => 'required|integer|min:0',
+            'stock' => 'required|numeric|integer|min:0|max:999999',
         ]);
 
         $producto = Product::create($request->only(['clave', 'descripcion', 'marca', 'stock']));
@@ -68,30 +68,22 @@ class ProductController extends Controller
     }
 
     /**
-     * Guardar un kit con múltiples productos (nuevos)
+     * Guardar múltiples productos a la vez (carga masiva para inventario)
      */
-    private function storeKit(Request $request)
+    private function storeProductosMasivos(Request $request)
     {
         $request->validate([
-            'nombre_kit' => 'required|unique:kits,nombre|max:255',
-            'codigo_kit' => 'required|unique:kits,codigo_kit|max:20',
-            'descripcion_kit' => 'nullable|max:255',
             'productos.*.clave' => 'required|unique:products,clave|max:20',
             'productos.*.marca' => 'required|max:255',
             'productos.*.descripcion' => 'required|max:255',
-            'productos.*.stock' => 'required|integer|min:0',
+            'productos.*.stock' => 'required|numeric|integer|min:0|max:999999',
         ]);
 
         DB::beginTransaction();
         try {
-            // Crear el kit
-            $kit = Kit::create([
-                'nombre' => $request->input('nombre_kit'),
-                'codigo_kit' => $request->input('codigo_kit'),
-                'descripcion' => $request->input('descripcion_kit'),
-            ]);
+            $productosAgregados = 0;
 
-            // Crear productos y agregarlos al kit
+            // Crear cada producto
             foreach ($request->input('productos') as $item) {
                 $producto = Product::create([
                     'clave' => $item['clave'],
@@ -100,25 +92,16 @@ class ProductController extends Controller
                     'stock' => $item['stock'],
                 ]);
 
-                // Agregar el producto al kit con cantidad 1
-                $kit->productos()->attach($producto->id, ['cantidad' => 1]);
-                
-                // Registrar creación de cada producto
+                // Registrar creación de cada producto en bitácora
                 BitacoraHelper::registrarCrearProducto($producto);
+                $productosAgregados++;
             }
 
-            // Registrar creación del kit
-            BitacoraHelper::registrar(
-                'crear',
-                'Creó un nuevo kit: ' . $kit->nombre . ' con ' . count($request->input('productos')) . ' productos',
-                $kit->id
-            );
-
             DB::commit();
-            return redirect()->route('products.index')->with('success', 'Kit creado exitosamente con ' . count($request->input('productos')) . ' productos nuevos');
+            return redirect()->route('products.index')->with('success', 'Se agregaron ' . $productosAgregados . ' productos exitosamente');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->withErrors(['error' => 'Error al crear el kit: ' . $e->getMessage()]);
+            return redirect()->back()->withErrors(['error' => 'Error al agregar productos: ' . $e->getMessage()]);
         }
     }
 

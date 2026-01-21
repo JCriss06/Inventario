@@ -142,8 +142,8 @@
                 </div>
                 <div class="text-center md:text-right">
                     <p class="text-sm font-medium text-gray-900">Contacto de Desarrollo</p>
-                    <p class="text-xs text-gray-500 mt-1">Email: desarrollo@inventrackteam.com</p>
-                    <p class="text-xs text-gray-500">Tel: +52 (555) 123-4567</p>
+                    <p class="text-xs text-gray-500 mt-1">Email: dev.team1406@outlook.com</p>
+                    {{-- <p class="text-xs text-gray-500">Tel: +52 (833) 123-4567</p> --}}
                 </div>
             </div>
             <div class="border-t border-gray-200 mt-4 pt-4 text-center">

@@ -1,0 +1,20 @@
+-- Productos de Prueba para TSM Sistemas Integrales
+INSERT INTO products (clave, descripcion, marca, stock, created_at, updated_at) VALUES
+('SERV-001', 'Servidor Dell PowerEdge R750 - 2x Xeon Gold 6348', 'Dell', 3, NOW(), NOW()),
+('SERV-002', 'Servidor HP ProLiant DL380 Gen10 - 2x Xeon Platinum', 'HP', 2, NOW(), NOW()),
+('SERV-003', 'Servidor Lenovo ThinkSystem SR650 - 2x Xeon Silver', 'Lenovo', 5, NOW(), NOW()),
+('CAM-001', 'Cámara de vigilancia Hikvision IP 4K 8MP', 'Hikvision', 12, NOW(), NOW()),
+('CAM-002', 'Cámara de vigilancia Dahua 5MP Dome', 'Dahua', 8, NOW(), NOW()),
+('CAM-003', 'Cámara Uniview Bullet 2K', 'Uniview', 6, NOW(), NOW()),
+('PC-001', 'Computadora Dell OptiPlex 7090 Desktop', 'Dell', 15, NOW(), NOW()),
+('PC-002', 'Computadora Lenovo ThinkCentre M90', 'Lenovo', 10, NOW(), NOW()),
+('PC-003', 'Laptop Dell XPS 15 - i7 - 32GB RAM - 1TB SSD', 'Dell', 4, NOW(), NOW()),
+('MONITOR-001', 'Monitor LG 27" 4K UltraFine USB-C', 'LG', 8, NOW(), NOW()),
+('MONITOR-002', 'Monitor Dell 24" P2423DE IPS', 'Dell', 11, NOW(), NOW()),
+('TECLADO-001', 'Teclado Logitech MX Keys - Wireless', 'Logitech', 25, NOW(), NOW()),
+('MOUSE-001', 'Mouse Logitech MX Master 3S - Wireless', 'Logitech', 20, NOW(), NOW()),
+('SWITCH-001', 'Switch Cisco Catalyst 2960-X 48 Puertos Gigabit', 'Cisco', 2, NOW(), NOW()),
+('SWITCH-002', 'Switch Netgear ProSAFE GS110 16 Puertos', 'Netgear', 3, NOW(), NOW()),
+('ROUTER-001', 'Router MikroTik hEX PoE', 'MikroTik', 4, NOW(), NOW()),
+('FIREWALL-001', 'Firewall Fortinet FortiGate 100F', 'Fortinet', 1, NOW(), NOW()),
+('PRINTER-001', 'Impresora HP LaserJet Pro M428fdw', 'HP', 2, NOW(), NOW());

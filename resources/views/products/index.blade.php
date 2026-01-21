@@ -34,10 +34,10 @@
                     <h3 class="text-lg font-semibold text-gray-900">Total de Productos: {{ $producto->total() }}</h3>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <a href="{{ route('products.create') }}" class="flex items-center justify-center gap-2 px-6 py-2 bg-rose-600 text-white font-medium rounded-lg hover:bg-rose-700 transition-colors">
+                    <a href="{{ route('products.create') }}" class="flex items-center justify-center gap-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
                         <span>➕</span> Agregar Producto
                     </a>
-                    <a href="{{ route('inventory.index') }}" class="flex items-center justify-center gap-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    <a href="{{ route('inventory.index') }}" class="flex items-center justify-center gap-2 px-6 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors">
                         <span>↕️</span> Entradas/Salidas
                     </a>
                 </div>
@@ -73,15 +73,15 @@
                                 <td class="px-6 py-4 text-sm font-semibold text-gray-900">{{ $prod->stock }}</td>
                                 <td class="px-6 py-4 text-sm">
                                     @if($prod->stock <= 10)
-                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700">
                                             🔴 Stock Bajo
                                         </span>
                                     @elseif($prod->stock <= 30)
-                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
                                             🟡 Stock Medio
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
                                             🟢 Stock Alto
                                         </span>
                                     @endif
