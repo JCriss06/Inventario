@@ -14,14 +14,22 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search', '');
         
-        $producto = Product::orderBy('clave','asc')
-        ->select('id','clave','descripcion','marca','stock')->paginate();
+        $query = Product::orderBy('clave', 'asc')->select('id', 'clave', 'descripcion', 'marca', 'stock');
+        
+        // Si hay búsqueda, filtrar por clave, descripción o marca
+        if ($search) {
+            $query->where('clave', 'like', "%{$search}%")
+                  ->orWhere('descripcion', 'like', "%{$search}%")
+                  ->orWhere('marca', 'like', "%{$search}%");
+        }
+        
+        $producto = $query->paginate();
 
-
-        return view('products.index', compact('producto'));
+        return view('products.index', compact('producto', 'search'));
     }
 
     /**
@@ -164,6 +172,27 @@ class ProductController extends Controller
         
         $producto->delete();
         return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente');
+    }
+
+    /**
+     * Búsqueda AJAX en tiempo real
+     */
+    public function search(Request $request)
+    {
+        $search = $request->input('q', '');
+        
+        if (strlen($search) < 1) {
+            return response()->json([]);
+        }
+        
+        $productos = Product::where('clave', 'like', "%{$search}%")
+                            ->orWhere('descripcion', 'like', "%{$search}%")
+                            ->orWhere('marca', 'like', "%{$search}%")
+                            ->select('id', 'clave', 'descripcion', 'marca', 'stock')
+                            ->limit(20)
+                            ->get();
+        
+        return response()->json($productos);
     }
 }
 

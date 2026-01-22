@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
     
     // Rutas para productos
     Route::resource('products', ProductController::class)->names('products');
+    Route::get('/products/search/ajax', [ProductController::class, 'search'])->name('products.search');
     
     // Rutas para kits
     Route::resource('kits', KitController::class)->names('kits');
