@@ -41,21 +41,21 @@
                 <!-- Tarjetas de Resumen - Movimientos -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-white rounded-b-lg shadow-sm p-6 border border-gray-200 border-t-0">
                     <!-- Total Movimientos -->
-                    <div class="rounded-lg p-4 border-l-4 border-blue-500 bg-blue-50">
+                    <div class="rounded-lg p-4 border-l-4 border-blue-500 bg-white shadow-md">
                         <p class="text-gray-600 text-xs font-medium">Total Movimientos</p>
                         <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ $reportes->count() }}</h3>
                         <p class="text-xs text-gray-500 mt-1">Registros en el período</p>
                     </div>
 
                     <!-- Total Entradas -->
-                    <div class="rounded-lg p-4 border-l-4 border-green-500 bg-green-50">
+                    <div class="rounded-lg p-4 border-l-4 border-green-500 bg-white shadow-md">
                         <p class="text-gray-600 text-xs font-medium">Total Entradas</p>
                         <h3 class="text-2xl font-bold text-green-600 mt-1">+{{ $reportes->where('tipo_reporte', 'entrada')->sum('cantidad') }}</h3>
                         <p class="text-xs text-gray-500 mt-1">Unidades ingresadas</p>
                     </div>
 
                     <!-- Total Salidas -->
-                    <div class="rounded-lg p-4 border-l-4 border-red-500 bg-red-50">
+                    <div class="rounded-lg p-4 border-l-4 border-red-500 bg-white shadow-md">
                         <p class="text-gray-600 text-xs font-medium">Total Salidas</p>
                         <h3 class="text-2xl font-bold text-red-600 mt-1">-{{ $reportes->where('tipo_reporte', 'salida')->sum('cantidad') }}</h3>
                         <p class="text-xs text-gray-500 mt-1">Unidades retiradas</p>
