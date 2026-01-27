@@ -139,8 +139,12 @@ class ReportController extends Controller
         $totalEntradas = $reportes->where('tipo_reporte', 'entrada')->sum('cantidad');
         $totalSalidas = $reportes->where('tipo_reporte', 'salida')->sum('cantidad');
 
+        // Convertir logo a base64
+        $logoPath = public_path('img/logo.png');
+        $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+
         // Generar HTML para el PDF
-        $html = view('reportes.pdf', compact('reportes', 'totalEntradas', 'totalSalidas', 'request'))->render();
+        $html = view('reportes.pdf', compact('reportes', 'totalEntradas', 'totalSalidas', 'request', 'logoBase64'))->render();
 
         // Crear instancia de Dompdf
         $dompdf = new Dompdf();
