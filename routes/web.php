@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     
     //rutas para reportes
     Route::get('/reportes', [ReportController::class, 'index'])->name('reportes.index');
+    Route::get('/reportes/export/pdf', [ReportController::class, 'exportPdf'])->name('reportes.export.pdf');
     
     //rutas para bitácoras
     Route::get('/bitacoras', [BitacoraController::class, 'index'])->name('bitacoras.index');

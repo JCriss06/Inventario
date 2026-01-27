@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Reporte;
 use Illuminate\Support\Carbon;
+use Dompdf\Dompdf;
 
 class ReportController extends Controller
 {
@@ -95,5 +96,59 @@ class ReportController extends Controller
         $productos = \App\Models\Product::orderBy('clave')->get();
 
         return view('reportes.index', compact('reportes', 'stocks', 'alertas', 'normales', 'productos'));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $query = Reporte::with(['product', 'user'])->latest();
+
+        // Aplicar los mismos filtros que en index
+        if ($request->filled('periodo')) {
+            switch ($request->periodo) {
+                case 'hoy':
+                    $query->whereDate('created_at', Carbon::today());
+                    break;
+                case 'semana':
+                    $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    break;
+                case 'mes':
+                    $query->whereMonth('created_at', Carbon::now()->month)
+                          ->whereYear('created_at', Carbon::now()->year);
+                    break;
+                case 'año':
+                    $query->whereYear('created_at', Carbon::now()->year);
+                    break;
+            }
+        }
+
+        if ($request->filled('producto')) {
+            $query->where('product_id', $request->producto);
+        }
+
+        if ($request->filled('tipo')) {
+            $query->where('tipo_reporte', $request->tipo);
+        }
+
+        if ($request->filled('fecha_inicio') && $request->filled('fecha_fin')) {
+            $query->whereBetween('created_at', [$request->fecha_inicio, $request->fecha_fin]);
+        }
+
+        $reportes = $query->get();
+
+        // Calcular resumen
+        $totalEntradas = $reportes->where('tipo_reporte', 'entrada')->sum('cantidad');
+        $totalSalidas = $reportes->where('tipo_reporte', 'salida')->sum('cantidad');
+
+        // Generar HTML para el PDF
+        $html = view('reportes.pdf', compact('reportes', 'totalEntradas', 'totalSalidas', 'request'))->render();
+
+        // Crear instancia de Dompdf
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Descargar el PDF
+        return $dompdf->stream('reportes-inventario-' . now()->format('Y-m-d-His') . '.pdf');
     }
 }
