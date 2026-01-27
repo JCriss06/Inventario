@@ -56,8 +56,52 @@
     </div>
 
     <div class="p-6 bg-gray-50 border-t" x-show="movimientos.length > 0">
-        <x-primary-button class="w-full justify-center py-3 text-lg">
+        <button type="button" @click="mostrarConfirmacion = true" class="w-full justify-center py-3 text-lg px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
             Guardar Movimiento
-        </x-primary-button>
+        </button>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div x-show="mostrarConfirmacion" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 p-6 space-y-4">
+            <div class="flex items-center gap-3">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h3 class="text-lg font-semibold text-gray-900">Confirmar Movimiento</h3>
+            </div>
+
+            <p class="text-sm text-gray-600">
+                ¿Estás seguro de guardar estos <span class="font-semibold" x-text="movimientos.length"></span> movimiento(s)?
+            </p>
+
+            <div class="bg-gray-50 rounded-lg p-4 max-h-48 overflow-y-auto space-y-2">
+                <template x-for="item in movimientos" :key="item.id">
+                    <div class="flex justify-between text-sm border-b border-gray-200 pb-2">
+                        <div>
+                            <p class="font-medium text-gray-900" x-text="item.descripcion"></p>
+                            <p class="text-xs text-gray-500">
+                                <span x-text="item.tipo === 'entrada' ? '↓ Entrada' : '↑ Salida'" 
+                                      :class="item.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'"></span>
+                            </p>
+                        </div>
+                        <p class="font-semibold text-gray-900" x-text="item.cantidad + ' un.'"></p>
+                    </div>
+                </template>
+            </div>
+
+            <p class="text-xs text-gray-500">
+                <strong>Recuerda:</strong> Verifica que todos los datos sean correctos antes de confirmar.
+            </p>
+
+            <div class="flex gap-3 justify-end pt-4 border-t border-gray-200">
+                <button type="button" @click="mostrarConfirmacion = false" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit" @click="mostrarConfirmacion = false" class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                    Sí, Confirmar
+                </button>
+            </div>
+        </div>
     </div>
 </form>

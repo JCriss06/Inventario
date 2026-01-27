@@ -60,6 +60,7 @@
             movimientos: [],
             tipoGlobal: 'entrada',
             search: '',
+            mostrarConfirmacion: false,
             
             // Función de búsqueda (Nombre o Clave)
             match(desc, clave) {

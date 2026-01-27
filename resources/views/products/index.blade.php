@@ -23,10 +23,26 @@
 
             <!-- Barra de búsqueda -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                <input type="text" id="searchInput" placeholder="🔍 Buscar por clave, descripción o marca..." 
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <p class="text-xs text-gray-500 mt-1">Encuentra lo que necesitas</p>
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="🔍 Buscar por clave, descripción o marca..." 
+                           value="{{ $search ?? '' }}"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <div id="searchResults" class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-96 overflow-y-auto z-50"></div>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Busca en tiempo real en todos los productos</p>
             </div>
+
+            <!-- Indicador de filtro activo -->
+            @if($search)
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between">
+                    <span class="text-sm text-blue-700">
+                        <strong>Filtro activo:</strong> Mostrando resultados para "{{ $search }}"
+                    </span>
+                    <a href="{{ route('products.index') }}" class="text-blue-600 hover:text-blue-800 font-medium text-sm underline">
+                        Limpiar filtro
+                    </a>
+                </div>
+            @endif
 
             <!-- Barra de acciones -->
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -124,13 +140,11 @@
             </div>
 
             <!-- Paginación -->
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between mt-6">
                 <p class="text-sm text-gray-600">
                     Mostrando {{ $producto->firstItem() ?? 0 }} a {{ $producto->lastItem() ?? 0 }} de {{ $producto->total() }} productos
                 </p>
-                <div class="flex gap-2">
-                    {{ $producto->links() }}
-                </div>
+                {{ $producto->links('vendor.pagination.bootstrap-4') }}
             </div>
 
         </div>
@@ -138,50 +152,60 @@
 
     <script>
         const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
         const tableRows = document.querySelectorAll('tbody tr');
         const columnHeaders = document.querySelectorAll('thead th[data-column]');
-        let totalProductos = {{ $producto->total() }};
         let sortColumn = null;
         let sortDirection = 'asc';
+        let searchTimeout;
 
-        // Búsqueda
+        // Búsqueda AJAX en tiempo real
         searchInput.addEventListener('input', function() {
-            const query = this.value.toLowerCase().trim();
-            let visibleCount = 0;
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
 
-            tableRows.forEach(row => {
-                // Saltar fila de "No hay productos"
-                if (row.querySelector('td[colspan="6"]')) {
-                    return;
-                }
+            if (query.length < 1) {
+                searchResults.classList.add('hidden');
+                return;
+            }
 
-                const clave = row.cells[0]?.textContent.toLowerCase() || '';
-                const descripcion = row.cells[1]?.textContent.toLowerCase() || '';
-                const marca = row.cells[2]?.textContent.toLowerCase() || '';
+            searchTimeout = setTimeout(() => {
+                fetch(`{{ route('products.search') }}?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length === 0) {
+                            searchResults.innerHTML = '<div class="px-4 py-3 text-sm text-gray-500">No se encontraron productos</div>';
+                        } else {
+                            searchResults.innerHTML = data.map(producto => `
+                                <div class="px-4 py-3 border-b border-gray-100 hover:bg-blue-50 cursor-pointer transition-colors flex justify-between items-center group" onclick="filtrarProducto('${producto.clave}')">
+                                    <div>
+                                        <p class="font-medium text-gray-900">${producto.clave}</p>
+                                        <p class="text-xs text-gray-600">${producto.descripcion}</p>
+                                        <p class="text-xs text-gray-500">${producto.marca} • Stock: ${producto.stock}</p>
+                                    </div>
+                                    <span class="text-blue-600 font-medium text-sm group-hover:underline">Ver →</span>
+                                </div>
+                            `).join('');
+                        }
+                        searchResults.classList.remove('hidden');
+                    })
+                    .catch(error => console.error('Error:', error));
+            }, 300);
+        });
 
-                const matches = clave.includes(query) || descripcion.includes(query) || marca.includes(query);
-
-                if (query === '' || matches) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Mostrar mensaje si no hay resultados
-            let noResultsRow = document.querySelector('tbody tr[data-no-results]');
+        // Filtrar tabla por clave (búsqueda servidor-side)
+        function filtrarProducto(clave) {
+            searchInput.value = clave;
+            searchResults.classList.add('hidden');
             
-            if (visibleCount === 0 && query !== '') {
-                if (!noResultsRow) {
-                    noResultsRow = document.createElement('tr');
-                    noResultsRow.setAttribute('data-no-results', 'true');
-                    noResultsRow.innerHTML = '<td colspan="6" class="px-6 py-12 text-center"><p class="text-gray-500 text-sm">📭 No se encontraron productos con ese criterio.</p></td>';
-                    document.querySelector('tbody').appendChild(noResultsRow);
-                }
-                noResultsRow.style.display = '';
-            } else if (noResultsRow) {
-                noResultsRow.style.display = 'none';
+            // Redirigir con parámetro de búsqueda
+            window.location.href = `{{ route('products.index') }}?search=${encodeURIComponent(clave)}`;
+        }
+
+        // Cerrar resultados al hacer click fuera
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('#searchInput') && !event.target.closest('#searchResults')) {
+                searchResults.classList.add('hidden');
             }
         });
 

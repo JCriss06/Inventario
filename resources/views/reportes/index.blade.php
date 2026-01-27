@@ -128,6 +128,12 @@
                                 </svg>
                                 Filtrar
                             </button>
+                            <a href="{{ route('reportes.export.pdf') . '?' . http_build_query(array_filter(request()->only(['periodo', 'producto', 'tipo', 'fecha_inicio', 'fecha_fin']))) }}" class="px-4 py-1.5 bg-red-600 text-white font-medium text-sm rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8m0 8l-9-2m9 2l9-2m-9-8l9 2m-9-2l-9 2"></path>
+                                </svg>
+                                Exportar PDF
+                            </a>
                             @if(request()->anyFilled(['periodo', 'producto', 'tipo', 'fecha_inicio', 'fecha_fin']))
                                 <a href="{{ route('reportes.index') }}" class="px-4 py-1.5 bg-gray-200 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-300 transition-colors">
                                     Limpiar

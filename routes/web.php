@@ -26,11 +26,16 @@ Route::middleware('auth')->group(function () {
     // Gestión de Usuarios (La seguridad la pondremos en el controlador)
     Route::resource('users', UserController::class)->names('users');
 
-    // Productos (La seguridad la pondremos en el controlador)
-    Route::resource('products', ProductController::class)->names('products');
+   // Productos
+Route::resource('products', ProductController::class)->names('products');
+Route::get('/products/search/ajax', [ProductController::class, 'search'])
+    ->name('products.search');
 
-    // Inventario (Como son rutas sueltas, aquí SI funciona el middleware directo)
- Route::get('/inventario', [InventoryController::class, 'index'])
+// Kits
+Route::resource('kits', KitController::class)->names('kits');
+
+// Inventario
+Route::get('/inventario', [InventoryController::class, 'index'])
     ->name('inventory.index')
     ->middleware('can:gestionar inventario');
 
@@ -38,18 +43,19 @@ Route::post('/inventario/movements', [InventoryController::class, 'store'])
     ->name('inventory.store')
     ->middleware('can:gestionar inventario');
 
-    // Reportes
-    Route::get('/reportes', [ReportController::class, 'index'])
-        ->name('reportes.index')
-        ->middleware('can:ver reportes');
+// Reportes
+Route::get('/reportes', [ReportController::class, 'index'])
+    ->name('reportes.index')
+    ->middleware('can:ver reportes');
 
-    // Bitácoras
-    Route::get('/bitacoras', [BitacoraController::class, 'index'])
-        ->name('bitacoras.index')
-        ->middleware('can:ver bitacoras');
+Route::get('/reportes/export/pdf', [ReportController::class, 'exportPdf'])
+    ->name('reportes.export.pdf');
 
-    // Kits
-    Route::resource('kits', KitController::class)->names('kits');
+// Bitácoras
+Route::get('/bitacoras', [BitacoraController::class, 'index'])
+    ->name('bitacoras.index')
+    ->middleware('can:ver bitacoras');
+
 });
 
 require __DIR__.'/auth.php';
