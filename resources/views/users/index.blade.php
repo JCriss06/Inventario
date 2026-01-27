@@ -37,11 +37,15 @@
                 <div class="flex items-center gap-2">
                     <h3 class="text-lg font-semibold text-gray-900">Total de Usuarios: {{ $users->total() }}</h3>
                 </div>
+                
+                {{-- Botón Agregar: Solo visible si tiene permiso 'crear usuarios' --}}
+                @can('crear usuarios')
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <a href="{{ route('users.create') }}" class="flex items-center justify-center gap-2 px-6 py-2 bg-rose-500 text-white font-medium rounded-lg hover:bg-rose-700 transition-colors">
                         <span>➕</span> Agregar Usuario
                     </a>
                 </div>
+                @endcan
             </div>
 
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -72,14 +76,18 @@
                                 </td>
                                 <td class="px-6 py-4 text-sm text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        {{-- Botón Editar --}}
+                                        
+                                        {{-- Botón Editar: Solo si tiene permiso 'editar usuarios' --}}
+                                        @can('editar usuarios')
                                         <a href="{{ route('users.edit', $user) }}" 
                                            class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" 
                                            title="Editar Usuario">
                                             ✏️
                                         </a>
+                                        @endcan
 
-                                        {{-- Botón Eliminar --}}
+                                        {{-- Botón Eliminar: Solo si tiene permiso 'eliminar usuarios' --}}
+                                        @can('eliminar usuarios')
                                         <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
@@ -90,6 +98,8 @@
                                                 🗑️
                                             </button>
                                         </form>
+                                        @endcan
+
                                     </div>
                                 </td>
                             </tr>
@@ -97,9 +107,13 @@
                             <tr>
                                 <td colspan="4" class="px-6 py-12 text-center">
                                     <p class="text-gray-500 text-sm">No hay usuarios registrados aún</p>
+                                    
+                                    {{-- Mostrar botón de crear primer usuario solo si tiene permiso --}}
+                                    @can('crear usuarios')
                                     <a href="{{ route('users.create') }}" class="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-rose-600 text-white text-sm font-medium rounded-lg hover:bg-rose-700 transition-colors">
                                         <span>➕</span> Crear primer usuario
                                     </a>
+                                    @endcan
                                 </td>
                             </tr>
                         @endforelse

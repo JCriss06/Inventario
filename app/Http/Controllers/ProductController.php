@@ -8,9 +8,27 @@ use App\Models\Product;
 use App\Models\Kit;
 use App\Helpers\BitacoraHelper;
 use Illuminate\Support\Facades\DB;
-
-class ProductController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+class ProductController extends Controller implements HasMiddleware
 {
+
+public static function middleware(): array
+    {
+        return [
+            // Ver lista
+            new Middleware('can:ver productos', only: ['index', 'show']),
+            
+            // Crear
+            new Middleware('can:crear productos', only: ['create', 'store']),
+
+            // Editar
+            new Middleware('can:editar productos', only: ['edit', 'update']),
+
+            // Eliminar
+            new Middleware('can:eliminar productos', only: ['destroy']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */

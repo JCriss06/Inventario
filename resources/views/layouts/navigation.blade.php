@@ -20,35 +20,44 @@
                                  : 'text-gray-500 hover:text-gray-700' }}">
                         Dashboard
                     </a>
-                    <a href="{{ route('products.index') }}" 
-                       class="px-4 py-2 text-sm font-medium rounded-none transition-colors
-                              {{ request()->routeIs('products.*') 
-                                 ? 'text-rose-600 border-b-2 border-rose-600' 
-                                 : 'text-gray-500 hover:text-gray-700' }}">
-                        Productos
-                    </a>
-                    <a href="{{ route('bitacoras.index') }}" 
-                       class="px-4 py-2 text-sm font-medium rounded-none transition-colors
-                              {{ request()->routeIs('bitacoras.*') 
-                                 ? 'text-rose-600 border-b-2 border-rose-600' 
-                                 : 'text-gray-500 hover:text-gray-700' }}">
-                        Bitácoras
-                    </a>
-                    <a href="{{ route('reportes.index') }}" 
-                       class="px-4 py-2 text-sm font-medium rounded-none transition-colors
-                              {{ request()->routeIs('reportes.*') 
-                                 ? 'text-rose-600 border-b-2 border-rose-600' 
-                                 : 'text-gray-500 hover:text-gray-700' }}">
-                        Reportes
-                    </a>
+                @can('ver productos')
+    <a href="{{ route('products.index') }}" 
+       class="px-4 py-2 text-sm font-medium rounded-none transition-colors
+              {{ request()->routeIs('products.*') 
+                 ? 'text-rose-600 border-b-2 border-rose-600' 
+                 : 'text-gray-500 hover:text-gray-700' }}">
+        Productos
+    </a>
+    @endcan
+                  @can('ver bitacoras')
+    <a href="{{ route('bitacoras.index') }}" 
+       class="px-4 py-2 text-sm font-medium rounded-none transition-colors
+              {{ request()->routeIs('bitacoras.*') 
+                 ? 'text-rose-600 border-b-2 border-rose-600' 
+                 : 'text-gray-500 hover:text-gray-700' }}">
+        Bitácoras
+    </a>
+    @endcan
 
-                    <a href="{{ route('users.index') }}" 
-   class="px-4 py-2 text-sm font-medium rounded-none transition-colors
-          {{ request()->routeIs('users.*') 
-             ? 'text-rose-600 border-b-2 border-rose-600' 
-             : 'text-gray-500 hover:text-gray-700' }}">
-    Usuarios
-</a>
+    @can('ver reportes')
+    <a href="{{ route('reportes.index') }}" 
+       class="px-4 py-2 text-sm font-medium rounded-none transition-colors
+              {{ request()->routeIs('reportes.*') 
+                 ? 'text-rose-600 border-b-2 border-rose-600' 
+                 : 'text-gray-500 hover:text-gray-700' }}">
+        Reportes
+    </a>
+    @endcan
+
+             @can('ver usuarios')
+    <a href="{{ route('users.index') }}" 
+       class="px-4 py-2 text-sm font-medium rounded-none transition-colors
+              {{ request()->routeIs('users.*') 
+                 ? 'text-rose-600 border-b-2 border-rose-600' 
+                 : 'text-gray-500 hover:text-gray-700' }}">
+        Usuarios
+    </a>
+    @endcan
                 </nav>
             </div>
 
@@ -109,22 +118,30 @@
                class="block px-4 py-2 text-base font-medium {{ request()->routeIs('dashboard') ? 'text-rose-600 bg-rose-50 border-l-4 border-rose-600' : 'text-gray-600 hover:bg-gray-50' }}">
                 Dashboard
             </a>
+            @can('ver productos')
             <a href="{{ route('products.index') }}" 
                class="block px-4 py-2 text-base font-medium {{ request()->routeIs('products.*') ? 'text-rose-600 bg-rose-50 border-l-4 border-rose-600' : 'text-gray-600 hover:bg-gray-50' }}">
                 Productos
             </a>
+            @endcan
+            @can('ver bitacoras')
             <a href="{{ route('bitacoras.index') }}" 
                class="block px-4 py-2 text-base font-medium {{ request()->routeIs('bitacoras.*') ? 'text-rose-600 bg-rose-50 border-l-4 border-rose-600' : 'text-gray-600 hover:bg-gray-50' }}">
                 Bitácoras
             </a>
+            @endcan
+            @can('ver reportes')
             <a href="{{ route('reportes.index') }}" 
                class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reportes.*') ? 'text-rose-600 bg-rose-50 border-l-4 border-rose-600' : 'text-gray-600 hover:bg-gray-50' }}">
                 Reportes
             </a>
+            @endcan
+            @can('ver usuarios')
             <a href="{{ route('users.index') }}" 
    class="block px-4 py-2 text-base font-medium {{ request()->routeIs('users.*') ? 'text-rose-600 bg-rose-50 border-l-4 border-rose-600' : 'text-gray-600 hover:bg-gray-50' }}">
     Usuarios
 </a>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->
