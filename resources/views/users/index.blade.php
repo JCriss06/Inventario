@@ -38,7 +38,7 @@
                     <h3 class="text-lg font-semibold text-gray-900">Total de Usuarios: {{ $users->total() }}</h3>
                 </div>
                 
-                {{-- Botón Agregar: Solo visible si tiene permiso 'crear usuarios' --}}
+                
                 @can('crear usuarios')
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <a href="{{ route('users.create') }}" class="flex items-center justify-center gap-2 px-6 py-2 bg-rose-500 text-white font-medium rounded-lg hover:bg-rose-700 transition-colors">

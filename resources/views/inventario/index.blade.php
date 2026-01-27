@@ -70,7 +70,6 @@
 
             // Agregar a la lista de la derecha
             agregar(producto) {
-                // Evitar duplicados: Si ya está, mejor avisar o sumar
                 const existe = this.movimientos.find(m => m.id === producto.id && m.tipo === this.tipoGlobal);
                 
                 if (existe) {

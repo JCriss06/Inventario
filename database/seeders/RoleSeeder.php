@@ -15,10 +15,9 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Limpiar caché de permisos
+        
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // 2. Definir Permisos
         $permissions = [
             // Gestión de Usuarios
             'ver usuarios', 'crear usuarios', 'editar usuarios', 'eliminar usuarios',
@@ -39,14 +38,13 @@ class RoleSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // 3. Crear Roles
         $roleAdmin = Role::firstOrCreate(['name' => 'Admin']);
         $roleEmpleado = Role::firstOrCreate(['name' => 'Empleado']);
 
         // El admin siempre tendrá todos los permisos
         $roleAdmin->givePermissionTo(Permission::all());
 
-        // 4. Crear Usuario Admin
+       
         $adminUser = User::firstOrCreate(
             ['email' => 'admin@admin.com'], // Buscamos por email para no duplicar
             [

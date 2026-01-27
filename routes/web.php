@@ -8,7 +8,7 @@ use App\Http\Controllers\KitController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BitacoraController;
-use App\Http\Controllers\UserController; // Corregido el namespace
+use App\Http\Controllers\UserController; 
 
 Route::redirect('/', '/login');
 
@@ -23,7 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Gestión de Usuarios (La seguridad la pondremos en el controlador)
+ 
     Route::resource('users', UserController::class)->names('users');
 
    // Productos

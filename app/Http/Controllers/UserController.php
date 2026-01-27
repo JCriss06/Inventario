@@ -20,7 +20,6 @@ public static function middleware(): array
             new Middleware('can:ver usuarios', only: ['index']),
 
             // El resto: Requiere permisos específicos
-            // Nota: El Admin pasa automáticamente si tiene todos los permisos asignados
             new Middleware('can:crear usuarios', only: ['create', 'store']),
             new Middleware('can:editar usuarios', only: ['edit', 'update']),
             new Middleware('can:eliminar usuarios', only: ['destroy']),
@@ -49,8 +48,8 @@ public static function middleware(): array
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'puesto' => ['required', 'string', 'max:100'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'exists:roles,name'], // Validamos que el rol exista
-            'permissions' => ['array'], // Opcional, pero si viene debe ser un arreglo
+            'role' => ['required', 'exists:roles,name'],
+            'permissions' => ['array'],
         ]);
 
         $user = User::create([
@@ -60,11 +59,10 @@ public static function middleware(): array
             'password' => Hash::make($request->password),
         ]);
 
-        // 1. Asignar el Rol (Admin o Empleado)
+        // Asignar el Rol
         $user->assignRole($request->role);
 
-        // 2. Asignar permisos específicos (si se seleccionaron)
-        // Esto permite que un Empleado tenga permisos "a la carta"
+        // Asignar permisos específicos (si se seleccionaron)
         if ($request->has('permissions')) {
             $user->syncPermissions($request->permissions);
         }
@@ -103,12 +101,9 @@ public static function middleware(): array
 
         $user->update($data);
 
-        // 1. Sincronizar Rol (quita el anterior y pone el nuevo)
         $user->syncRoles($request->role);
 
-        // 2. Sincronizar Permisos
-        // Usamos 'permissions' del request, o un array vacío [] si no se marcó nada.
-        // Esto asegura que si desmarcas todo, se le quiten los permisos al usuario.
+   
         $user->syncPermissions($request->permissions ?? []);
 
         return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente.');
@@ -120,7 +115,7 @@ public static function middleware(): array
             return back()->with('error', 'No puedes eliminar tu propia cuenta mientras estás logueado.');
         }
 
-        // Al eliminar el usuario, Spatie automáticamente limpia las relaciones en la DB
+
         $user->delete();
         
         return redirect()->route('users.index')->with('success', 'Usuario eliminado correctamente.');
