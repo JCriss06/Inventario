@@ -8,6 +8,8 @@ use App\Http\Controllers\KitController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BitacoraController;
+use AppApp\Http\Controllers\UserController;
+
 
 Route::redirect('/', '/login');
 
@@ -34,6 +36,9 @@ Route::middleware('auth')->group(function () {
     
     //rutas para bitácoras
     Route::get('/bitacoras', [BitacoraController::class, 'index'])->name('bitacoras.index');
+
+    //ruta user
+    Route::resource('users', \App\Http\Controllers\UserController::class)->names('users');
 
 });
 

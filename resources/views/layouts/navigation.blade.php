@@ -41,6 +41,14 @@
                                  : 'text-gray-500 hover:text-gray-700' }}">
                         Reportes
                     </a>
+
+                    <a href="{{ route('users.index') }}" 
+   class="px-4 py-2 text-sm font-medium rounded-none transition-colors
+          {{ request()->routeIs('users.*') 
+             ? 'text-rose-600 border-b-2 border-rose-600' 
+             : 'text-gray-500 hover:text-gray-700' }}">
+    Usuarios
+</a>
                 </nav>
             </div>
 
@@ -113,6 +121,10 @@
                class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reportes.*') ? 'text-rose-600 bg-rose-50 border-l-4 border-rose-600' : 'text-gray-600 hover:bg-gray-50' }}">
                 Reportes
             </a>
+            <a href="{{ route('users.index') }}" 
+   class="block px-4 py-2 text-base font-medium {{ request()->routeIs('users.*') ? 'text-rose-600 bg-rose-50 border-l-4 border-rose-600' : 'text-gray-600 hover:bg-gray-50' }}">
+    Usuarios
+</a>
         </div>
 
         <!-- Responsive Settings Options -->
